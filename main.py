@@ -39,7 +39,8 @@ model = GPT2LMHeadModel.from_pretrained(pretrained_model_name_or_path=None,
                                         config=GPT2Config.from_dict(kogpt2_config),
                                         state_dict=torch.load(model_file))
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cpu');
 model.to(device)
 
 requests_queue = Queue()    # request queue.
