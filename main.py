@@ -30,21 +30,23 @@ category_map = {
 }
 os.system('ls')
 app = Flask(__name__)
+can_gpu = torch.cuda.is_available()
 
 # Model & Tokenizer loading
 tokenizer = sentencepiece.SentencePieceProcessor()
 tokenizer.load(tok_path)
 
-model = GPT2LMHeadModel.from_pretrained(pretrained_model_name_or_path=None,
-                                        config=GPT2Config.from_dict(kogpt2_config),
-                                        state_dict=torch.load(model_file))
-
-#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu'
-try:
+if can_gpu:
     device = torch.device('cuda')
-except Exception as e:
+    model = GPT2LMHeadModel.from_pretrained(pretrained_model_name_or_path=None,
+                                            config=GPT2Config.from_dict(kogpt2_config),
+                                            state_dict=torch.load(model_file))
+else:
     device = torch.device('cpu')
-    
+    model = GPT2LMHeadModel.from_pretrained(pretrained_model_name_or_path=None,
+                                            config=GPT2Config.from_dict(kogpt2_config),
+                                            state_dict=torch.load(model_file, map_location=device))
+
 model.to(device)
 
 requests_queue = Queue()    # request queue.
